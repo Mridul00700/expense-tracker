@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Tracker</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+
+  <script src="https://unpkg.com/dexie@3/dist/dexie.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>Expenses</h1>
+  <p id="total">₹0</p>
+</header>
+
+<main>
+  <div id="expense-list"></div>
+</main>
+
+<!-- Bottom Add Bar -->
+<form id="expense-form">
+  <input type="number" id="amount" placeholder="₹ Amount" required />
+  <input type="text" id="category" placeholder="Category" required />
+  <button type="submit">＋</button>
+</form>
+
+<button id="export-btn">Export</button>
+<button id="import-btn">Import</button>
+<input type="file" id="file-input" hidden />
+
+<script src="db.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
