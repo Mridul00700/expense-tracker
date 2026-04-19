@@ -135,3 +135,9 @@ async function loadExpenses() {
 }
 
 loadExpenses();
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/expense-tracker/service-worker.js")
+    .then(() => console.log("Service Worker registered"))
+    .catch(err => console.log("SW error:", err));
+}
