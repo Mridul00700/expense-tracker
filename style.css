@@ -122,3 +122,7 @@ main {
   justify-content: center;
   gap: 12px;
 }
+
+#custom-category {
+  margin-top: 8px;
+}

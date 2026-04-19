@@ -11,6 +11,9 @@ const exportBtn = document.getElementById("export-btn");
 const importBtn = document.getElementById("import-btn");
 const fileInput = document.getElementById("file-input");
 
+const categorySelect = document.getElementById("category");
+const customCategoryInput = document.getElementById("custom-category");
+
 let monthlyBudget = localStorage.getItem("budget") || 0;
 budgetInput.value = monthlyBudget;
 
@@ -20,6 +23,15 @@ const categoryMap = {
   Shopping: { icon: "🛍️" },
   Bills: { icon: "💡" }
 };
+
+/* SHOW CUSTOM CATEGORY INPUT */
+categorySelect.addEventListener("change", () => {
+  if (categorySelect.value === "Others") {
+    customCategoryInput.style.display = "block";
+  } else {
+    customCategoryInput.style.display = "none";
+  }
+});
 
 /* SAVE BUDGET */
 saveBudgetBtn.onclick = () => {
@@ -37,14 +49,23 @@ saveBudgetBtn.onclick = () => {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  let category = categorySelect.value;
+
+  if (category === "Others") {
+    category = customCategoryInput.value || "Others";
+  }
+
   const expense = {
     amount: Number(document.getElementById("amount").value),
-    category: document.getElementById("category").value,
+    category: category,
     date: new Date().toISOString()
   };
 
   await db.expenses.add(expense);
+
   form.reset();
+  customCategoryInput.style.display = "none";
+
   loadExpenses();
 });
 
@@ -130,14 +151,12 @@ async function loadExpenses() {
     else progressBar.style.background = "green";
   }
 
-  /* INSIGHT */
   insightEl.textContent = "Track your spending wisely 💡";
 }
 
 loadExpenses();
 
+/* SERVICE WORKER */
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/expense-tracker/service-worker.js")
-    .then(() => console.log("Service Worker registered"))
-    .catch(err => console.log("SW error:", err));
+  navigator.serviceWorker.register("/expense-tracker/service-worker.js");
 }
