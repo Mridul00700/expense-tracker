@@ -18,36 +18,36 @@
     <h1>Expenses</h1>
     <p id="total">₹0</p>
 
-    <!-- Progress -->
     <div class="progress-container">
       <div id="progress-bar"></div>
     </div>
 
-    <!-- Budget -->
     <div class="budget-box">
       <input type="number" id="budget-input" placeholder="Set monthly budget ₹" min="0" />
       <button id="save-budget">Save</button>
     </div>
 
-    <!-- Insights -->
     <p id="insight">Track your spending wisely 💡</p>
 
-    <!-- Add Expense -->
+    <!-- FORM -->
     <form id="expense-form">
+
       <input type="number" id="amount" placeholder="Enter amount" required />
 
-      <select id="category">
-        <option>Food</option>
-        <option>Travel</option>
-        <option>Shopping</option>
-        <option>Bills</option>
-        <option>Others</option>
-      </select>
+      <div class="category-row">
+        <select id="category">
+          <option>Food</option>
+          <option>Travel</option>
+          <option>Shopping</option>
+          <option>Bills</option>
+          <option>Others</option>
+        </select>
 
-      <!-- Custom category -->
-      <input type="text" id="custom-category" placeholder="Enter custom category" style="display:none;" />
+        <input type="text" id="custom-category" placeholder="Custom" />
+      </div>
 
-      <button type="submit">Add</button>
+      <button type="submit" class="full-btn">Add</button>
+
     </form>
   </header>
 

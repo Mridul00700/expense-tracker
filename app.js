@@ -2,7 +2,6 @@ const form = document.getElementById("expense-form");
 const list = document.getElementById("expense-list");
 const totalEl = document.getElementById("total");
 const progressBar = document.getElementById("progress-bar");
-const insightEl = document.getElementById("insight");
 
 const budgetInput = document.getElementById("budget-input");
 const saveBudgetBtn = document.getElementById("save-budget");
@@ -18,13 +17,13 @@ let monthlyBudget = localStorage.getItem("budget") || 0;
 budgetInput.value = monthlyBudget;
 
 const categoryMap = {
-  Food: { icon: "🍔" },
-  Travel: { icon: "🚗" },
-  Shopping: { icon: "🛍️" },
-  Bills: { icon: "💡" }
+  Food: "🍔",
+  Travel: "🚗",
+  Shopping: "🛍️",
+  Bills: "💡"
 };
 
-/* SHOW CUSTOM CATEGORY INPUT */
+/* SHOW CUSTOM INPUT */
 categorySelect.addEventListener("change", () => {
   if (categorySelect.value === "Others") {
     customCategoryInput.style.display = "block";
@@ -39,13 +38,11 @@ saveBudgetBtn.onclick = () => {
   if (val < 0) val = 0;
 
   monthlyBudget = val;
-  budgetInput.value = val;
-
   localStorage.setItem("budget", monthlyBudget);
   loadExpenses();
 };
 
-/* ADD EXPENSE */
+/* ADD */
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -55,13 +52,11 @@ form.addEventListener("submit", async (e) => {
     category = customCategoryInput.value || "Others";
   }
 
-  const expense = {
+  await db.expenses.add({
     amount: Number(document.getElementById("amount").value),
-    category: category,
+    category,
     date: new Date().toISOString()
-  };
-
-  await db.expenses.add(expense);
+  });
 
   form.reset();
   customCategoryInput.style.display = "none";
@@ -74,22 +69,18 @@ list.addEventListener("click", async (e) => {
   const card = e.target.closest(".card");
   if (!card) return;
 
-  const id = Number(card.dataset.id);
-  await db.expenses.delete(id);
+  await db.expenses.delete(Number(card.dataset.id));
   loadExpenses();
 });
 
 /* EXPORT */
 exportBtn.onclick = async () => {
   const data = await db.expenses.toArray();
-
-  const blob = new Blob([JSON.stringify(data)], {
-    type: "application/json"
-  });
+  const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
 
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "expenses-backup.json";
+  a.download = "expenses.json";
   a.click();
 };
 
@@ -114,14 +105,10 @@ async function loadExpenses() {
   list.innerHTML = "";
   let total = 0;
 
-  if (expenses.length === 0) {
-    list.innerHTML = `<p style="text-align:center;color:gray;">No expenses yet</p>`;
-  }
-
   expenses.reverse().forEach(exp => {
     total += exp.amount;
 
-    const cat = categoryMap[exp.category] || { icon: "💸" };
+    const icon = categoryMap[exp.category] || "💸";
 
     const card = document.createElement("div");
     card.className = "card";
@@ -129,7 +116,7 @@ async function loadExpenses() {
 
     card.innerHTML = `
       <div>
-        <div class="category">${cat.icon} ${exp.category}</div>
+        <div class="category">${icon} ${exp.category}</div>
         <div class="note">${new Date(exp.date).toDateString()}</div>
       </div>
       <div>₹${exp.amount}</div>
@@ -140,18 +127,14 @@ async function loadExpenses() {
 
   totalEl.textContent = `₹${total}`;
 
-  /* PROGRESS */
   if (monthlyBudget > 0) {
     const percent = (total / monthlyBudget) * 100;
-
     progressBar.style.width = `${Math.min(percent, 100)}%`;
 
     if (percent > 100) progressBar.style.background = "red";
     else if (percent > 80) progressBar.style.background = "orange";
     else progressBar.style.background = "green";
   }
-
-  insightEl.textContent = "Track your spending wisely 💡";
 }
 
 loadExpenses();

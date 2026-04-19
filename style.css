@@ -4,7 +4,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* APP CONTAINER */
+/* APP */
 .app {
   max-width: 420px;
   margin: 20px auto;
@@ -21,12 +21,10 @@ header {
 
 h1 {
   margin: 0;
-  font-size: 26px;
 }
 
 #total {
   margin-top: 6px;
-  font-size: 20px;
   font-weight: 600;
 }
 
@@ -40,9 +38,7 @@ h1 {
 
 #progress-bar {
   height: 100%;
-  width: 0%;
   border-radius: 10px;
-  transition: all 0.4s ease;
 }
 
 /* BUDGET */
@@ -60,25 +56,45 @@ h1 {
 /* FORM */
 form {
   display: flex;
+  flex-direction: column;
   gap: 10px;
-  margin-top: 10px;
 }
 
 input, select {
-  flex: 1;
   padding: 12px;
   border-radius: 12px;
   border: 1px solid #ddd;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* CATEGORY ROW FIX */
+.category-row {
+  display: flex;
+  gap: 10px;
+}
+
+.category-row select {
+  flex: 1;
+}
+
+.category-row input {
+  flex: 1;
+  display: none;
+}
+
+/* FULL BUTTON */
+.full-btn {
+  width: 100%;
 }
 
 /* BUTTON */
 button {
-  padding: 10px 16px;
+  padding: 12px;
   border-radius: 12px;
   border: none;
   background: black;
   color: white;
-  font-weight: 500;
 }
 
 /* LIST */
@@ -99,11 +115,6 @@ main {
   align-items: center;
 
   box-shadow: 0 4px 10px rgba(0,0,0,0.04);
-  transition: 0.2s;
-}
-
-.card:active {
-  transform: scale(0.98);
 }
 
 .category {
@@ -121,8 +132,4 @@ main {
   display: flex;
   justify-content: center;
   gap: 12px;
-}
-
-#custom-category {
-  margin-top: 8px;
 }
