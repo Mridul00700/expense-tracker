@@ -1,50 +1,109 @@
 body {
   margin: 0;
+  background: #f2f3f7;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #f5f5f7;
 }
 
-/* Header */
-header {
-  padding: 20px;
+/* APP CONTAINER */
+.app {
+  max-width: 420px;
+  margin: 20px auto;
   background: white;
-  position: sticky;
-  top: 0;
-  border-bottom: 1px solid #eee;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+/* HEADER */
+header {
+  padding: 24px;
 }
 
 h1 {
   margin: 0;
-  font-size: 22px;
+  font-size: 26px;
 }
 
 #total {
-  margin-top: 5px;
-  font-size: 18px;
-  color: #666;
+  margin-top: 6px;
+  font-size: 20px;
+  font-weight: 600;
 }
 
-/* Expense List */
-main {
-  padding: 10px;
-  padding-bottom: 100px;
+/* PROGRESS */
+.progress-container {
+  height: 6px;
+  background: #eee;
+  border-radius: 10px;
+  margin: 14px 0;
 }
 
-.card {
-  background: white;
-  border-radius: 16px;
+#progress-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 10px;
+  transition: all 0.4s ease;
+}
+
+/* BUDGET */
+.budget-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.budget-box input {
+  flex: 1;
   padding: 12px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* FORM */
+form {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+input, select {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+}
+
+/* BUTTON */
+button {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: none;
+  background: black;
+  color: white;
+  font-weight: 500;
+}
+
+/* LIST */
+main {
+  padding: 12px;
+  border-top: 1px solid #eee;
+}
+
+/* CARD */
+.card {
+  background: #fff;
+  padding: 14px;
+  border-radius: 16px;
+  margin-bottom: 12px;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+  transition: 0.2s;
 }
 
-.card-left {
-  display: flex;
-  flex-direction: column;
+.card:active {
+  transform: scale(0.98);
 }
 
 .category {
@@ -56,50 +115,10 @@ main {
   color: gray;
 }
 
-.amount {
-  font-weight: bold;
-  font-size: 16px;
-}
-
-/* Bottom Form */
-form {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: white;
-  padding: 10px;
+/* ACTIONS */
+.actions {
+  padding: 20px;
   display: flex;
-  gap: 8px;
-  border-top: 1px solid #eee;
-}
-
-input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-}
-
-button {
-  background: black;
-  color: white;
-  border: none;
-  padding: 0 16px;
-  border-radius: 10px;
-  font-size: 20px;
-}
-
-/* Month Section */
-.month-header {
-  margin: 15px 5px 8px;
-}
-
-.month-title {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.month-total {
-  font-size: 13px;
-  color: gray;
+  justify-content: center;
+  gap: 12px;
 }

@@ -1,8 +1,7 @@
-const dbInstance = new Dexie("ExpenseDB");
+const db = new Dexie("ExpenseDB");
 
-dbInstance.version(1).stores({
+db.version(1).stores({
   expenses: "++id, amount, category, note, date"
 });
 
-// ✅ expose globally
-window.db = dbInstance;
+window.db = db;

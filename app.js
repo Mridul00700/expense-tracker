@@ -1,154 +1,65 @@
 const form = document.getElementById("expense-form");
 const list = document.getElementById("expense-list");
 const totalEl = document.getElementById("total");
-console.log("DB in app.js:", window.db);
+const progressBar = document.getElementById("progress-bar");
+const insightEl = document.getElementById("insight");
+
+const budgetInput = document.getElementById("budget-input");
+const saveBudgetBtn = document.getElementById("save-budget");
+
+const exportBtn = document.getElementById("export-btn");
+const importBtn = document.getElementById("import-btn");
+const fileInput = document.getElementById("file-input");
+
+let monthlyBudget = localStorage.getItem("budget") || 0;
+budgetInput.value = monthlyBudget;
+
+const categoryMap = {
+  Food: { icon: "🍔" },
+  Travel: { icon: "🚗" },
+  Shopping: { icon: "🛍️" },
+  Bills: { icon: "💡" }
+};
+
+/* SAVE BUDGET */
+saveBudgetBtn.onclick = () => {
+  let val = Number(budgetInput.value);
+  if (val < 0) val = 0;
+
+  monthlyBudget = val;
+  budgetInput.value = val;
+
+  localStorage.setItem("budget", monthlyBudget);
+  loadExpenses();
+};
+
+/* ADD EXPENSE */
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const expense = {
     amount: Number(document.getElementById("amount").value),
     category: document.getElementById("category").value,
-    note: "",
     date: new Date().toISOString()
   };
 
   await db.expenses.add(expense);
-
   form.reset();
   loadExpenses();
 });
 
-async function loadExpenses() {
-  const expenses = await db.expenses.toArray();
+/* DELETE */
+list.addEventListener("click", async (e) => {
+  const card = e.target.closest(".card");
+  if (!card) return;
 
-  list.innerHTML = "";
+  const id = Number(card.dataset.id);
+  await db.expenses.delete(id);
+  loadExpenses();
+});
 
-  // Group by month
-  const grouped = {};
-
-  expenses.forEach(exp => {
-    const date = new Date(exp.date);
-    const key = `${date.getFullYear()}-${date.getMonth()}`;
-
-    if (!grouped[key]) {
-      grouped[key] = [];
-    }
-
-    grouped[key].push(exp);
-  });
-
-  // Sort months (latest first)
-  const sortedKeys = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
-
-  let grandTotal = 0;
-
-  sortedKeys.forEach(key => {
-    const [year, month] = key.split("-");
-    const monthName = new Date(year, month).toLocaleString("default", {
-      month: "long",
-      year: "numeric"
-    });
-
-    const section = document.createElement("div");
-
-    // Calculate monthly total
-    let monthlyTotal = 0;
-    grouped[key].forEach(e => monthlyTotal += e.amount);
-    grandTotal += monthlyTotal;
-
-    section.innerHTML = `
-      <div class="month-header">
-        <div>
-          <div class="month-title">${monthName}</div>
-          <div class="month-total">₹${monthlyTotal}</div>
-        </div>
-      </div>
-    `;
-
-    grouped[key]
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .forEach(exp => {
-        const card = document.createElement("div");
-        card.className = "card";
-
-        card.innerHTML = `
-          <div class="card-left">
-            <div class="category">${exp.category}</div>
-            <div class="note">${new Date(exp.date).toDateString()}</div>
-          </div>
-          <div class="amount">₹${exp.amount}</div>
-        `;
-
-        section.appendChild(card);
-      });
-
-    list.appendChild(section);
-  });
-
-  totalEl.textContent = `₹${grandTotal}`;
-}
-
-loadExpenses();
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/expense-tracker/service-worker.js")
-      .then(reg => {
-        console.log("Service Worker registered", reg);
-      })
-      .catch(err => {
-        console.log("Service Worker failed", err);
-      });
-  });
-}
-
-let newWorker;
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/service-worker.js").then(reg => {
-
-    reg.addEventListener("updatefound", () => {
-      newWorker = reg.installing;
-
-      newWorker.addEventListener("statechange", () => {
-        if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-          showUpdateBanner();
-        }
-      });
-    });
-  });
-}
-
-// Show update UI
-function showUpdateBanner() {
-  const banner = document.createElement("div");
-  banner.innerHTML = `
-    <div style="
-      position: fixed;
-      bottom: 80px;
-      left: 10px;
-      right: 10px;
-      background: black;
-      color: white;
-      padding: 12px;
-      border-radius: 10px;
-      text-align: center;
-    ">
-      New version available
-      <button id="update-btn" style="margin-left:10px;">Update</button>
-    </div>
-  `;
-
-  document.body.appendChild(banner);
-
-  document.getElementById("update-btn").onclick = () => {
-    newWorker.postMessage("SKIP_WAITING");
-    window.location.reload();
-  };
-}
-
-document.getElementById("export-btn").onclick = async () => {
+/* EXPORT */
+exportBtn.onclick = async () => {
   const data = await db.expenses.toArray();
 
   const blob = new Blob([JSON.stringify(data)], {
@@ -161,11 +72,8 @@ document.getElementById("export-btn").onclick = async () => {
   a.click();
 };
 
-const fileInput = document.getElementById("file-input");
-
-document.getElementById("import-btn").onclick = () => {
-  fileInput.click();
-};
+/* IMPORT */
+importBtn.onclick = () => fileInput.click();
 
 fileInput.onchange = async (e) => {
   const file = e.target.files[0];
@@ -177,3 +85,53 @@ fileInput.onchange = async (e) => {
 
   loadExpenses();
 };
+
+/* LOAD */
+async function loadExpenses() {
+  const expenses = await db.expenses.toArray();
+
+  list.innerHTML = "";
+  let total = 0;
+
+  if (expenses.length === 0) {
+    list.innerHTML = `<p style="text-align:center;color:gray;">No expenses yet</p>`;
+  }
+
+  expenses.reverse().forEach(exp => {
+    total += exp.amount;
+
+    const cat = categoryMap[exp.category] || { icon: "💸" };
+
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.id = exp.id;
+
+    card.innerHTML = `
+      <div>
+        <div class="category">${cat.icon} ${exp.category}</div>
+        <div class="note">${new Date(exp.date).toDateString()}</div>
+      </div>
+      <div>₹${exp.amount}</div>
+    `;
+
+    list.appendChild(card);
+  });
+
+  totalEl.textContent = `₹${total}`;
+
+  /* PROGRESS */
+  if (monthlyBudget > 0) {
+    const percent = (total / monthlyBudget) * 100;
+
+    progressBar.style.width = `${Math.min(percent, 100)}%`;
+
+    if (percent > 100) progressBar.style.background = "red";
+    else if (percent > 80) progressBar.style.background = "orange";
+    else progressBar.style.background = "green";
+  }
+
+  /* INSIGHT */
+  insightEl.textContent = "Track your spending wisely 💡";
+}
+
+loadExpenses();

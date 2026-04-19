@@ -9,29 +9,56 @@
 
   <script src="https://unpkg.com/dexie@3/dist/dexie.js"></script>
 </head>
+
 <body>
 
-<header>
-  <h1>Expenses</h1>
-  <p id="total">₹0</p>
-</header>
+<div class="app">
 
-<main>
-  <div id="expense-list"></div>
-</main>
+  <header>
+    <h1>Expenses</h1>
+    <p id="total">₹0</p>
 
-<!-- Bottom Add Bar -->
-<form id="expense-form">
-  <input type="number" id="amount" placeholder="₹ Amount" required />
-  <input type="text" id="category" placeholder="Category" required />
-  <button type="submit">＋</button>
-</form>
+    <!-- Progress -->
+    <div class="progress-container">
+      <div id="progress-bar"></div>
+    </div>
 
-<button id="export-btn">Export</button>
-<button id="import-btn">Import</button>
-<input type="file" id="file-input" hidden />
+    <!-- Budget -->
+    <div class="budget-box">
+      <input type="number" id="budget-input" placeholder="Set monthly budget ₹" min="0" />
+      <button id="save-budget">Save</button>
+    </div>
+
+    <!-- Insights -->
+    <p id="insight">Track your spending wisely 💡</p>
+
+    <!-- Add Expense -->
+    <form id="expense-form">
+      <input type="number" id="amount" placeholder="Enter amount" required />
+
+      <select id="category">
+        <option>Food</option>
+        <option>Travel</option>
+        <option>Shopping</option>
+        <option>Bills</option>
+      </select>
+
+      <button type="submit">Add</button>
+    </form>
+  </header>
+
+  <main id="expense-list"></main>
+
+  <div class="actions">
+    <button id="export-btn">Export</button>
+    <button id="import-btn">Import</button>
+    <input type="file" id="file-input" hidden />
+  </div>
+
+</div>
 
 <script src="db.js"></script>
 <script src="app.js"></script>
+
 </body>
 </html>

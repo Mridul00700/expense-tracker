@@ -1,4 +1,4 @@
-const CACHE_NAME = "expense-app-v1";
+const CACHE_NAME = "expense-app-v2";
 
 // ⚠️ If using GitHub Pages, update BASE_PATH
 // Example: "/expense-tracker/"
